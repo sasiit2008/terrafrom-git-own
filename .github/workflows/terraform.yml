@@ -31,7 +31,7 @@ jobs:
         if: ${{ env.terraformCreate == 'True' }}
         run: |
           terraform init \
-            -backend-config="bucket=op-terraform-state-file-1234" \
+            -backend-config="bucket=sst-s3-bukcet-terra-logs" \
             -backend-config="key=sasi-env.tfstate" \
             -backend-config="region=ap-southeast-1" \
             -backend=true
