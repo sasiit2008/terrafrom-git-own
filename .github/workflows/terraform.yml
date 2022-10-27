@@ -1,0 +1,105 @@
+name: terraform
+on:
+  push:
+    branches:
+      - main
+
+env:
+  terraformCreate: True
+  terraformDelete: False
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        if: ${{ env.terraformCreate == 'True' }}
+        uses: actions/checkout@v1
+      - name: setup terraform
+        if: ${{ env.terraformCreate == 'True' }}
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.8
+      - name: configure aws credentials
+        if: ${{ env.terraformCreate == 'True' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: init
+        if: ${{ env.terraformCreate == 'True' }}
+        run: |
+          terraform init \
+            -backend-config="bucket=op-terraform-state-file-1234" \
+            -backend-config="key=sasi-env.tfstate" \
+            -backend-config="region=ap-southeast-1" \
+            -backend=true
+      - name: fmt
+        if: ${{ env.terraformCreate == 'True' }}
+        run: terraform fmt
+      - name: validate
+        if: ${{ env.terraformCreate == 'True' }}
+        run: terraform validate
+      - name: plan
+        run: terraform  plan  -var-file="config.tfvars"
+        if: ${{ env.terraformCreate == 'True' }}
+      - name: apply
+        if: ${{ env.terraformCreate == 'True' }}
+        run: terraform  apply -var-file="config.tfvars" -auto-approve
+
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        if: ${{ env.terraformDelete == 'True' }}
+        uses: actions/checkout@v1
+      - name: setup terraform
+        if: ${{ env.terraformDelete == 'True' }}
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.8
+      - name: configure aws credentials
+        if: ${{ env.terraformDelete == 'True' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: init
+        if: ${{ env.terraformDelete == 'True' }}
+        run: |
+          terraform init \
+            -backend-config="bucket=op-terraform-state-file-1234" \
+            -backend-config="key=sasi-env.tfstate" \
+            -backend-config="region=ap-southeast-1" \
+            -backend=true
+      - name: destroy
+        if: ${{ env.terraformDelete == 'True' }}
+        run: terraform  destroy -var-file="config.tfvars" -auto-approve
+
+  show:
+    needs: create
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.8
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: init
+        run: |
+          terraform init \
+            -backend-config="bucket=op-terraform-state-file-1234" \
+            -backend-config="key=sasi-env.tfstate" \
+            -backend-config="region=ap-southeast-1" \
+            -backend=true
+      - name: show
+        run: terraform show
