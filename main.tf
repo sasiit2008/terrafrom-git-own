@@ -21,7 +21,7 @@ module "intranet" {
   stageThreeLambdaTwo = "sk-c6-lambda"
   infraZone           = "intranet"
   lambdaTimeout       = 30
-  sqsAlertQueue       = "alert"
+  sqsAlertQueue       = "fhq-uat-antivirus-cloud"
   vpc_endpoint_ids    = ["vpce-09deef99b4857eceb"]
   security_group_ids  = ["sg-0a9b472e30d04eae9"]
   lambda_subnet_ids   = ["subnet-08d001784f7e4bbfc", "subnet-0202799018892b2eb"]
