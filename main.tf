@@ -26,8 +26,8 @@ module "intranet" {
   security_group_ids  = ["sg-0a9b472e30d04eae9"]
   lambda_subnet_ids   = ["subnet-08d001784f7e4bbfc", "subnet-0202799018892b2eb"]
   default_tags = {
-    Environment = "Test"
+    Environment = "Uat"
     Owner       = "TFProviders"
-    Project     = "Test"
+    Project     = "BCA"
   }
 }
