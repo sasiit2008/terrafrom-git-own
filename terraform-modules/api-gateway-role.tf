@@ -1,5 +1,5 @@
 resource "aws_iam_role" "apigateway" {
-  name = "op-apigateway-role"
+  name = "sst-bca-apigateway-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -16,7 +16,7 @@ resource "aws_iam_role" "apigateway" {
 }
 
 resource "aws_iam_policy" "apigateway" {
-  name = "op-apigateway-role-policy"
+  name = "sst-bca-apigateway-role-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
